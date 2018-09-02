@@ -1,0 +1,25 @@
+{
+  "name": "sve-server",
+  "version": "1.0.0",
+  "description": "Back end of Pontinel",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server(index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://ehuenuman@bitbucket.org/arteimpresion/sve-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/arteimpresion/sve-server#readme",
+  "dependencies": {
+    "cassandra-driver": "^3.5.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  }
+}
