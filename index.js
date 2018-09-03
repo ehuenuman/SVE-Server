@@ -2,8 +2,6 @@ const express = require('express');
 const morgan = require('morgan');
 const app = express();
 
-global.connection = require('./database');
-
 // Settings
 app.set('port', process.env.PORT || 80); 
 
@@ -13,6 +11,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api/structure', require('./routes/structure.routes'));
+
+// Database connection
+global.connection = require('./database');
 
 // Starting the server
 app.listen(app.get('port'), () => {
