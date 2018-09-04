@@ -11,6 +11,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/structure', require('./routes/structure.routes'));
+app.use('/api/structure', require('./routes/sensor.routes'));
 
 // Database connection
 global.connection = require('./database');
