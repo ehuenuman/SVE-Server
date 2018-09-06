@@ -14,7 +14,7 @@ structureController.getStructures = (req, res) => {
     });
 }
 
-structureController.getStructure = function () {}
+structureController.getStructure = (req, res)
 
 structureController.createStructure = function() {}
 
