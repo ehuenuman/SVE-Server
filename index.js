@@ -13,6 +13,7 @@ app.set('port', process.env.PORT || 80);
 
 // Middlewares
 app.use(morgan('dev'));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(session({
   genid:  (req) => {
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
   //console.log(uniqueId);
   res.send('You hit home page!');
 });
+app.use('/auth', require('./routes/login.routes'));
 app.use('/api/structure', require('./routes/structure.routes'));
 app.use('/api/sensor', require('./routes/sensor.routes'));
 
