@@ -14,7 +14,7 @@ app.use('/api/structure', require('./routes/structure.routes'));
 app.use('/api/structure', require('./routes/sensor.routes'));
 
 // Database connection
-global.connection = require('./database');
+global.connection = require('./config/database');
 
 // Starting the server
 app.listen(app.get('port'), () => {
