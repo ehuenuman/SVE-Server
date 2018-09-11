@@ -4,14 +4,14 @@
   "description": "Back end of Pontinel",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server/index.js"
+    "dev": "nodemon --ignore sessions/ server/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://ehuenuman@bitbucket.org/arteimpresion/sve-server.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Esteban Huenumán",
   "license": "ISC",
   "homepage": "https://bitbucket.org/arteimpresion/sve-server#readme",
   "dependencies": {
@@ -22,6 +22,7 @@
     "mysql": "^2.16.0",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "session-file-store": "^1.2.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

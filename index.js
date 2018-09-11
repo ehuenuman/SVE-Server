@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const uuid = require('uuid/v4');
 const session = require('express-session');
+const FileStore = require('session-file-store')(session);
 
 // Create server
 const app = express();
@@ -19,6 +20,7 @@ app.use(session({
     console.log(req.sessionID);
     return uuid();
   },
+  store: new FileStore(),
   secret: 'mota floja',
   resave: false,
   saveUninitialized: true
@@ -29,7 +31,7 @@ app.get('/', (req, res) => {
   console.log('Inside the homepage callback function');
   console.log(req.sessionID);
   //console.log(uniqueId);
-  res.send('Ypu hit home page!');
+  res.send('You hit home page!');
 });
 app.use('/api/structure', require('./routes/structure.routes'));
 app.use('/api/sensor', require('./routes/sensor.routes'));
