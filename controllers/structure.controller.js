@@ -1,7 +1,7 @@
 const structureController = {};
 
 structureController.getStructures = (req, res) => {
-    connection.query('call getStructures', function (error, results, fields) {
+    connection.query('call getStructuresAdmin', function (error, results, fields) {
         if (error) {
             res.json({
                 "status": 500, "error": error, "repsonse": null
@@ -14,7 +14,7 @@ structureController.getStructures = (req, res) => {
     });
 }
 
-structureController.getStructure = (req, res)
+structureController.getStructure = function() {}
 
 structureController.createStructure = function() {}
 
