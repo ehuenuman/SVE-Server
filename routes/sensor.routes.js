@@ -3,7 +3,14 @@ const router  = express.Router();
 
 const controller = require('../controllers/sensor.controller')
 
-router.get('/', controller.getSensors)
+router.get('/', (req, res) => {
+  if (req.isAuthenticated()) {
+    //controller.getSensors    
+    res.send('Sensor');
+  } else {
+    res.redirect('/');
+  }
+});
 router.get('/:id', controller.getSensor);
 router.post('/', controller.createSensor);
 router.put('/:id', controller.editSensor);
