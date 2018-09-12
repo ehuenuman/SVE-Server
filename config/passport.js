@@ -1,5 +1,6 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require('bcrypt-nodejs');
 
 // Configure passport.js to use the local strategy
 passport.use("login", new LocalStrategy(
@@ -8,9 +9,9 @@ passport.use("login", new LocalStrategy(
     passwordField: "password",
     passReqToCallback: true
   },
-  (username, password, done) => {
-    console.log("Inside local strategy callback");
-    connection.query("call loginUser('"+username+"')", function (error, rows) {      
+  (req, username, password, done) => {
+    console.log("Inside local strategy callback");    
+    connection.query("call loginUser('"+username+"')", function (error, rows) {       
       if (error) {
         console.log("Error DB");
         return done(error);  
@@ -19,7 +20,7 @@ passport.use("login", new LocalStrategy(
         console.log("Usuario no existe");
         return done(null, false);
       }
-      if (!(rows[0][0].password == password)) {
+      if (!(bcrypt.compareSync(password, rows[0][0].password))) {
         console.log("Error de contraseña");
         return done(null, false);
       }
