@@ -10,23 +10,25 @@ passport.use("login", new LocalStrategy(
     passReqToCallback: true
   },
   (req, username, password, done) => {
-    console.log("Inside local strategy callback");    
-    connection.query("call loginUser('"+username+"')", function (error, rows) {       
+    console.log("Inside local strategy callback");
+    connection.query("call loginUser('"+username+"')", function (error, rows) {
       if (error) {
-        console.log("Error DB");
-        return done(error);  
+        return done(error, false, {"msg": "Error de consulta a base de datos"});  
       }
       if (!rows[0].length) {
-        console.log("Usuario no existe");
-        return done(null, false);
+        return done(null, false, {"msg": "Usuario no existe"});
       }
       if (!(bcrypt.compareSync(password, rows[0][0].password))) {
-        console.log("Error de contraseña");
-        return done(null, false);
+        return done(null, false, {"msg": "Contraseña incorrecta"});
       }
       console.log("Usuario correcto");
       const user =rows[0][0];
-      return done(null, user);
+      connection.query("call updateLastLogin("+user.user_id+")", function (error, rows) {
+        if (error) {
+          return done(error, false, {"msg": "No se actualizó el last login"});
+        }
+      });
+      return done(null, user, {"msg": "Autentificación correcta"});
     });
   }
 ));
