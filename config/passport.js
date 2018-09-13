@@ -10,7 +10,7 @@ passport.use("login", new LocalStrategy(
     passReqToCallback: true
   },
   (req, username, password, done) => {
-    console.log("Inside local strategy callback");
+    //console.log("Inside local strategy callback");
     connection.query("call loginUser('"+username+"')", function (error, rows) {
       if (error) {
         return done(error, false, {"msg": "Error de consulta a base de datos"});  
@@ -21,8 +21,8 @@ passport.use("login", new LocalStrategy(
       if (!(bcrypt.compareSync(password, rows[0][0].password))) {
         return done(null, false, {"msg": "Contraseña incorrecta"});
       }
-      console.log("Usuario correcto");
-      const user =rows[0][0];
+      //console.log("Usuario correcto");
+      const user = rows[0][0];
       connection.query("call updateLastLogin("+user.user_id+")", function (error, rows) {
         if (error) {
           return done(error, false, {"msg": "No se actualizó el last login"});
@@ -35,13 +35,13 @@ passport.use("login", new LocalStrategy(
 
 // Tell passport how to serialize the user
 passport.serializeUser((user, done) => {
-  console.log("Inside serializeUser callback. User id is save to session file store here.");
+  //console.log("Inside serializeUser callback. User id is save to session file store here.");
   done(null, user.user_id);
 });
 
 passport.deserializeUser((id, done) => {
-  console.log("Inside deserializeUser callback")
-  console.log(`The user id passport saved in the session file store is: ${id}`)
+  //console.log("Inside deserializeUser callback")
+  //console.log(`The user id passport saved in the session file store is: ${id}`)
   connection.query("call deserializeUser(" + id + ")", function(error, rows) {
     done(error, rows[0][0]);
   });
