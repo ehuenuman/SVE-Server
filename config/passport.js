@@ -10,6 +10,7 @@ passport.use("login", new LocalStrategy(
     passReqToCallback: true
   },
   (req, username, password, done) => {
+    //console.log(bcrypt.hashSync(password));
     //console.log("Inside local strategy callback");
     connection.query("call loginUser('"+username+"')", function (error, rows) {
       if (error) {
