@@ -3,24 +3,37 @@ const router  = express.Router();
 
 //const controller = require('../controllers/login.controller')
 const passport = require('../config/passport');
+const auth_methods = require("../config/auth.methods");
 
 router.post('/login', (req, res, next) => {
   //console.log('Inside POST /login callback function');
   //console.log(req.body);
   passport.authenticate('login', (error, user, info) => {
-    //console.log('Inside passport.authenticate() callback');
-    //console.log(`req.session.passport: ${JSON.stringify(req.session.passport)}`)
-    //console.log(`req.user: ${JSON.stringify(req.user)}`)
-    req.login(user, (err) => {
-      //console.log('Inside req.login() callback')
-      //console.log(`req.session.passport: ${JSON.stringify(req.session.passport)}`)
-      //console.log(`req.user: ${JSON.stringify(req.user)}`)
-      return res.json({
+    if (error) {
+      res.status(404).json({
         'error': error,
         'info': info.msg,
-        'user': req.user
+        'user': user
       });
-    })
+      return;
+    }
+
+    if (user) {
+      var token = auth_methods.generateJwt(user);
+      res.status(200);
+      res.json({
+        'token': token,
+        'error': error,
+        'info': info.msg,
+        'user': user
+      });
+    } else {
+      res.status(404).json({
+        'error': error,
+        'info': info.msg,
+        'user': user
+      });
+    }
   })(req, res, next);
 });
 
