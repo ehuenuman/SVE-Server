@@ -3,6 +3,12 @@ const router  = express.Router();
 
 const controller = require('../controllers/structure.controller')
 
+var jwt = require('express-jwt');
+var auth = jwt({
+  secret: "MY_SECRET",
+  userProperty: "payload"
+});
+
 /* Tipos de usuarios
  * 1: Administrador
  * 2: Representante
@@ -10,7 +16,7 @@ const controller = require('../controllers/structure.controller')
  * 4: Invitado
  */
 
-router.get('/', (req, res) => {
+router.get('/', auth, (req, res) => {
   switch ( req.user.profile_id ) {
     case 1:
       controller.getStructuresForAdmin(req, res);
@@ -25,14 +31,7 @@ router.get('/', (req, res) => {
       controller.getStructuresOfGuest(req, res);
       break;
   }
-}
-  
-  /*if (req.isAuthenticated()) {
-    controller.getStructuresForAdmin
-  } else {
-    res.redirect('/');
-  }*/
-);
+});
 
 router.get('/:id', controller.getStructure);
 router.post('/', controller.createStructure);
