@@ -19,13 +19,15 @@ router.post('/login', (req, res, next) => {
     }
 
     if (user) {
-      var token = auth_methods.generateJwt(user);
-      res.status(200);
-      res.json({
-        'token': token,
-        'error': error,
-        'info': info.msg,
-        'user': user
+      req.login(user, (err) => {
+        var token = auth_methods.generateJwt(user);
+        res.status(200);
+        res.json({
+          'token': token,
+          'error': error,
+          'info': info.msg,
+          'user': user
+        });
       });
     } else {
       res.status(404).json({
