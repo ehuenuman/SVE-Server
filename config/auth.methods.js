@@ -1,20 +1,20 @@
 var crypto = require("crypto");
 var jwt = require("jsonwebtoken");
 
-var exports = module.exports = {};
+const authMethods = {};
 
-exports.createPassword = function (password) {
+authMethods.createPassword = function (password) {
   salt = crypto.randomBytes(16).toString('hex');
   hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
   console.log(salt, hash);
 };
 
-exports.validPassword = function (password, hash, salt) {
+authMethods.validPassword = function (password, hash, salt) {
   hash_to_verify = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
   return hash === hash_to_verify;
 };
 
-exports.generateJwt = function (user) {
+authMethods.generateJwt = function (user) {
   var expiry = new Date();
   expiry.setDate(expiry.getDate() + 7);
 
@@ -26,4 +26,5 @@ exports.generateJwt = function (user) {
   }, "MY_SECRET"); // DO NOT KEEP YOUR SECRET IN THE CODE!
 };
 
+module.exports = authMethods;
 
