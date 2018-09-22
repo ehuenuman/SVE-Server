@@ -14,16 +14,32 @@ authMethods.validPassword = function (password, hash, salt) {
   return hash === hash_to_verify;
 };
 
-authMethods.generateJwt = function (user) {
+authMethods.generatePayload = function (user) {
   var expiry = new Date();
   expiry.setDate(expiry.getDate() + 7);
 
-  return jwt.sign({
-    _id: user.id,
+  const payload = {
+    _id: user.user_id,
     username: user.username,
-    name: user.first_name,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    phone: user.phone,
+    email: user.email,
+    date_joined: user.date_joined,
+    last_login: user.last_login,
+    enterprise_id: user.enterprise_id,
+    enterprise_name: user.enterprise_name,
+    profile_id: user.profile_id,
+    profile_name: user.profile_name,
+    profile_description: user.profile_description,
     exp: parseInt(expiry.getTime() / 1000),
-  }, "MY_SECRET"); // DO NOT KEEP YOUR SECRET IN THE CODE!
+  }
+
+  return payload;
+}
+
+authMethods.generateJwt = function (payload) {
+  return jwt.sign(JSON.stringify(payload), "MY_SECRET"); 
 };
 
 module.exports = authMethods;
