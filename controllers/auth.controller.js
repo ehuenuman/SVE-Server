@@ -1,4 +1,3 @@
-var jwt = require("jsonwebtoken");
 const passport = require('../config/passport');
 const authMethods = require("../config/auth.methods");
 
@@ -17,7 +16,8 @@ authController.login = (req, res) => {
 //      return;
     }
     if (user) {
-      const payload = authMethods.generatePayload(user);
+      payload = "";
+      payload = authMethods.generatePayload(user);
       req.login(payload, { session: false }, (err) => {
         if (err) {
           res.status(404).json({
@@ -27,9 +27,7 @@ authController.login = (req, res) => {
         
         var token = authMethods.generateJwt(payload);
         user.salt = "salt";
-        user.password = "password";
-        //console.log(req);
-        //res.cookie('jwt', token, { httpOnly: true, secure: true });
+        user.password = "password";        
         res.status(200).json({
           'token': token,
           'error': error,
