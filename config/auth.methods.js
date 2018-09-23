@@ -6,7 +6,7 @@ const authMethods = {};
 authMethods.createPassword = function (password) {
   salt = crypto.randomBytes(16).toString('hex');
   hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  console.log(salt, hash);
+  //console.log(salt, hash);
 };
 
 authMethods.validPassword = function (password, hash, salt) {
