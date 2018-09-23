@@ -1,13 +1,14 @@
+var jwt = require("jsonwebtoken");
 const passport = require('../config/passport');
 const authMethods = require("../config/auth.methods");
 
 const authController = {};
 
 authController.login = (req, res) => {
-  console.log('Inside POST /login callback function');
-  passport.authenticate('login', (error, user, info) => {
-    console.log("Inside passport.authenticate callback");
-    if (error) {
+  //console.log('Inside POST /login callback function');
+  passport.authenticate('login', { session: false }, (error, user, info) => {
+    //console.log("Inside passport.authenticate callback");
+    if (error || !user ) {
       res.status(404).json({
         'error': error,
         'info': info.msg,
@@ -15,25 +16,28 @@ authController.login = (req, res) => {
       });
 //      return;
     }
-
     if (user) {
-      req.login(user, (err) => {
-        var token = authMethods.generateJwt(user);
-        res.status(200);
-        res.json({
+      const payload = authMethods.generatePayload(user);
+      req.login(payload, { session: false }, (err) => {
+        if (err) {
+          res.status(404).json({
+            'error': err
+          });
+        }
+        
+        var token = authMethods.generateJwt(payload);
+        user.salt = "salt";
+        user.password = "password";
+        //console.log(req);
+        //res.cookie('jwt', token, { httpOnly: true, secure: true });
+        res.status(200).json({
           'token': token,
           'error': error,
           'info': info.msg,
-          'user': user
+          'user': payload
         });
       });
-    } else {
-      res.status(404).json({
-        'error': error,
-        'info': info.msg,
-        'user': user
-      });
-    }
+    } 
   })(req, res);
 };
 
