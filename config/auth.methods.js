@@ -16,7 +16,7 @@ authMethods.validPassword = function (password, hash, salt) {
 
 authMethods.generatePayload = function (user) {
   var expiry = new Date();
-  expiry.setDate(expiry.getDate() + 7);
+  expiry.setDate(expiry.getDate());
 
   const payload = {
     _id: user.user_id,
@@ -32,7 +32,7 @@ authMethods.generatePayload = function (user) {
     profile_id: user.profile_id,
     profile_name: user.profile_name,
     profile_description: user.profile_description,
-    exp: parseInt(expiry.getTime() / 1000),
+    exp: parseInt((expiry.getTime() + 14400000) / 1000), //Set expire 4 hours later of login
   }
 
   return payload;
