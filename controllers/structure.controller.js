@@ -15,8 +15,9 @@ structureController.getStructuresForAdmin = (req, res) => {
 };
 
 structureController.getStructuresOfRepr = (req, res) => {
-  connection.query("call getStructuresOfRepr("+ req.user.enterprise_id +")", function (error, result, fields) {
+  connection.query("call getStructuresOfRepr(" + req.user.enterprise_id + ")", function (error, result, fields) {
     if (error) {
+      res.status(500);
       res.json({
         "status": 500, "error": error, "response": null
       });
@@ -29,7 +30,7 @@ structureController.getStructuresOfRepr = (req, res) => {
 };
 
 structureController.getStructureOfResp = (req, res) => {
-  connection.query("call getStructuresOfResp(?)", req.user.user_id, function (error, result, fields) {
+  connection.query("call getStructuresOfResp(" + req.user._id + ")", function (error, result, fields) {
     if (error) {
       res.json({
         "status": 500, "error": error, "response": null
@@ -43,7 +44,7 @@ structureController.getStructureOfResp = (req, res) => {
 };
 
 structureController.getStructuresOfGuest = (req, res) => {
-  connection.query("call getStructuresOfRepr(?)", req.user.enterprise_id, function (error, result, fields) {
+  connection.query("call getStructuresOfRepr(" + req.user.enterprise_id + ")", function (error, result, fields) {
     if (error) {
       res.json({
         "status": 500, "error": error, "response": null
