@@ -5,7 +5,7 @@ const controller = require('../controllers/sensor.controller')
 
 var jwt = require('express-jwt');
 var auth = jwt({
-  secret: "MY_SECRET",
+  secret: process.env.SECRET_KEY || "MOTA_FLOJA",
   getToken: function fromHeaderOrQueryString (req) {
     if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
       return req.headers.authorization.split(' ')[1];

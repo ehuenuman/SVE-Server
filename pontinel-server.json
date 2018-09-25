@@ -1,0 +1,22 @@
+
+{
+    "apps" : [{
+      "name"            : "pontinel-server",
+      "script"          : "./index.js",
+      "watch"           : true,
+      "log_file"        : "./logs/pontinel-server_errout.log",
+      "error_file"      : "./logs/pontinel-server_err.log",
+      "out_file"        : "./logs/pontinel-server_out.log",
+      "log_date_format" : "YYYY-MM-DD HH:mm Z",
+      "env": {
+        "NODE_ENV": "development",
+        "LISTEN_PORT": 80,
+        "SECRET_KEY": "MOTA_FLOJA"
+      },
+      "env_production" : {
+         "NODE_ENV": "production",
+         "LISTEN_PORT": 8080,
+         "SECRET_KEY": "r;uxy5M3jYG%\"J)Ie\"d~9s}#zh#dB_eyrzrM&n}EfN`'a5PB?v]58@%pGd}4([6"
+      }
+    }]
+  }

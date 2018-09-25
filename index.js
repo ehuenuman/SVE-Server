@@ -9,7 +9,7 @@ const passport = require('./config/passport');
 const app = express();
 
 // Settings
-app.set('port', process.env.PORT || 80); 
+app.set('port', process.env.LISTEN_PORT || 80);
 
 // Middlewares
 app.use(morgan('dev'));

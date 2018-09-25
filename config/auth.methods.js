@@ -39,7 +39,7 @@ authMethods.generatePayload = function (user) {
 }
 
 authMethods.generateJwt = function (payload) {
-  return jwt.sign(JSON.stringify(payload), "MY_SECRET"); 
+  return jwt.sign(JSON.stringify(payload), process.env.SECRET_KEY || "MOTA_FLOJA"); 
 };
 
 module.exports = authMethods;
