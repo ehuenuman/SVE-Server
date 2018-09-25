@@ -46,7 +46,7 @@ router.post('/', auth,
 });
 
 router.get('/:id', controller.getStructure);
-router.post('/', controller.createStructure);
+//router.post('/', controller.createStructure);
 router.put('/:id', controller.editStructure);
 router.delete('/:id', controller.deleteStructure);
 
