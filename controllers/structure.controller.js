@@ -1,3 +1,5 @@
+const methods = require('./methods.controller');
+
 const structureController = {};
 
 structureController.getStructuresForAdmin = (req, res) => {
@@ -57,7 +59,15 @@ structureController.getStructuresOfGuest = (req, res) => {
   });
 };
 
-structureController.getStructure = function() {}
+structureController.getStructure = (req, res) => {
+  var structure, sensors;
+  connection.query("call getStructure(" + req.params.id + ")", function (error, result, fields) {
+    if (!methods.isError(error, res)) {
+      res.json({
+        "status": 200, "error": null, "response": result[0][0] });
+    }
+  });
+};
 
 structureController.createStructure = function() {}
 
