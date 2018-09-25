@@ -21,6 +21,7 @@ app.use(passport.initialize());
 app.use('/auth', require('./routes/auth.routes'));
 app.use('/api/structure', require('./routes/structure.routes'));
 app.use('/api/sensor', require('./routes/sensor.routes'));
+app.use('/api/upload', require('./routes/upload.routes'));
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
