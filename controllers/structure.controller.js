@@ -4,12 +4,7 @@ const structureController = {};
 
 structureController.getStructuresForAdmin = (req, res) => {
   connection.query('call getStructuresAdmin', function (error, results, fields) {
-    if (error) {
-      res.status(500);
-      res.json({
-        "status": 500, "error": error, "repsonse": null
-      });
-    } else {
+    if (!methods.isError(error, res)) {
       res.status(200);
       res.json({
         "status": 200, "error": null, "response": results
@@ -20,12 +15,8 @@ structureController.getStructuresForAdmin = (req, res) => {
 
 structureController.getStructuresOfRepr = (req, res) => {
   connection.query("call getStructuresOfRepr(" + req.user.enterprise_id + ")", function (error, result, fields) {
-    if (error) {
-      res.status(500);
-      res.json({
-        "status": 500, "error": error, "response": null
-      });
-    } else {
+    if (!methods.isError(error, res)) {
+      res.status(200);
       res.json({
         "status": 200, "error": null, "response": result
       });
@@ -35,11 +26,8 @@ structureController.getStructuresOfRepr = (req, res) => {
 
 structureController.getStructureOfResp = (req, res) => {
   connection.query("call getStructuresOfResp(" + req.user._id + ")", function (error, result, fields) {
-    if (error) {
-      res.json({
-        "status": 500, "error": error, "response": null
-      });
-    } else {
+    if (!methods.isError(error, res)) {
+      res.status(200);
       res.json({
         "status": 200, "error": null, "response": result
       });
@@ -49,11 +37,8 @@ structureController.getStructureOfResp = (req, res) => {
 
 structureController.getStructuresOfGuest = (req, res) => {
   connection.query("call getStructuresOfRepr(" + req.user.enterprise_id + ")", function (error, result, fields) {
-    if (error) {
-      res.json({
-        "status": 500, "error": error, "response": null
-      });
-    } else {
+    if (!methods.isError(error, res)) {
+      res.status(200);
       res.json({
         "status": 200, "error": null, "response": result
       });
@@ -61,10 +46,10 @@ structureController.getStructuresOfGuest = (req, res) => {
   });
 };
 
-structureController.getStructure = (req, res) => {
-  var structure, sensors;
+structureController.getStructure = (req, res) => {  
   connection.query("call getStructure(" + req.params.id + ")", function (error, result, fields) {
     if (!methods.isError(error, res)) {
+      res.status(200);
       res.json({
         "status": 200, "error": null, "response": result[0][0] });
     }
