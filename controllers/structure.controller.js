@@ -5,10 +5,12 @@ const structureController = {};
 structureController.getStructuresForAdmin = (req, res) => {
   connection.query('call getStructuresAdmin', function (error, results, fields) {
     if (error) {
+      res.status(500);
       res.json({
         "status": 500, "error": error, "repsonse": null
       });
     } else {
+      res.status(200);
       res.json({
         "status": 200, "error": null, "response": results
       });
