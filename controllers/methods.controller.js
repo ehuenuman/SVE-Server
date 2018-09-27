@@ -6,6 +6,7 @@ methodsController.isError = (error, res) => {
     res.json({
       "status": 500, "error": error, "response": null
     });
+    return true;
   } else {
     return false;
   }
