@@ -3,7 +3,7 @@ const methods = require('./methods.controller');
 const sensorController = {};
 
 sensorController.getSensors = (req, res) => {
-  connection.query("call getSensorsOfStructure(" + req.body.structure_id + ")", function (error, result, fields) {        
+  connection.query("call getSensorsOfStructure(" + req.params.id + ")", function (error, result, fields) {        
     if (!methods.isError(error, res)) {
       res.status(200);
       res.json({
@@ -15,7 +15,12 @@ sensorController.getSensors = (req, res) => {
   });
 }
 
-sensorController.getSensor = function() {}
+sensorController.getSensor = (req, res) => {
+  res.status(200);
+  res.json({
+    "status": 200
+  });
+}
 
 sensorController.createSensor = function() {}
 

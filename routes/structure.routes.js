@@ -1,7 +1,8 @@
 const express = require('express');
 const router  = express.Router();
 
-const controller = require('../controllers/structure.controller')
+const structureController = require('../controllers/structure.controller');
+const sensorController = require('../controllers/sensor.controller');
 
 var jwt = require('express-jwt');
 var auth = jwt({
@@ -28,16 +29,16 @@ router.post('/', auth,
     if ( req.user.profile_id ) {
       switch ( req.user.profile_id ) {
         case 1:
-          controller.getStructuresForAdmin(req, res);
+          structureController.getStructuresForAdmin(req, res);
           break;
         case 2:
-          controller.getStructuresOfRepr(req, res);
+          structureController.getStructuresOfRepr(req, res);
           break;
         case 3:
-          controller.getStructureOfResp(req, res);
+          structureController.getStructureOfResp(req, res);
           break;
         case 4:
-          controller.getStructuresOfGuest(req, res);
+          structureController.getStructuresOfGuest(req, res);
           break;
       }
     } else {
@@ -45,9 +46,13 @@ router.post('/', auth,
     }
 });
 
-router.get('/:id', controller.getStructure);
+router.get('/:id', structureController.getStructure);
+
+router.get('/:id/sensor', sensorController.getSensors)
+
+router.get('/:id_structure/sensor/:id_sensor', sensorController.getSensor)
 //router.post('/', controller.createStructure);
-router.put('/:id', controller.editStructure);
-router.delete('/:id', controller.deleteStructure);
+//router.put('/:id', controller.editStructure);
+//router.delete('/:id', controller.deleteStructure);
 
 module.exports = router;
