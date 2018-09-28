@@ -2,10 +2,14 @@ const methodsController = {};
 
 methodsController.isError = (error, res) => {
   if (error) {
-    res.status(500);
-    res.json({
-      "status": 500, "error": error, "response": null
-    });
+    if (process.env.NODE_ENV === "production") {
+      res.sendStatus(500);
+    } else {
+      res.status(500);
+      res.json({
+        "status": 500, "error": error, "response": null
+      });
+    }
     return true;
   } else {
     return false;
