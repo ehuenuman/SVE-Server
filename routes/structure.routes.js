@@ -24,12 +24,12 @@ var auth = jwt({
  * 4: Invitado
  */
 
-router.post('/', auth, 
+router.get('/', auth, 
   (req, res) => {
     if ( req.user.profile_id ) {
       switch ( req.user.profile_id ) {
         case 1:
-          structureController.getStructuresForAdmin(req, res);
+          structureController.getStructuresOfAdmin(req, res);
           break;
         case 2:
           structureController.getStructuresOfRepr(req, res);
@@ -46,11 +46,12 @@ router.post('/', auth,
     }
 });
 
-router.get('/:id', structureController.getStructure);
+router.get('/:id', auth, structureController.getStructure);
 
-router.get('/:id/sensor', sensorController.getSensors)
+router.get('/:id/sensor', auth, sensorController.getSensors);
 
-router.get('/:id_structure/sensor/:id_sensor', sensorController.getSensor)
+router.get('/:structure_id/sensor/:sensor_id', auth, sensorController.getSensor);
+
 //router.post('/', controller.createStructure);
 //router.put('/:id', controller.editStructure);
 //router.delete('/:id', controller.deleteStructure);
