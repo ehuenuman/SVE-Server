@@ -2,7 +2,7 @@ const methods = require('./methods.controller');
 
 const structureController = {};
 
-structureController.getStructuresForAdmin = (req, res) => {
+structureController.getStructuresOfAdmin = (req, res) => {
   connection.query('call getStructuresAdmin', function (error, results, fields) {
     if (!methods.isError(error, res)) {
       res.status(200);
