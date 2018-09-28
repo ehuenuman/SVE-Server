@@ -50,7 +50,7 @@ router.get('/:id', auth, structureController.getStructure);
 
 router.get('/:id/sensor', auth, sensorController.getSensors);
 
-router.get('/:structure_id/sensor/:sensor_id', auth, sensorController.getSensor);
+router.get('/:structure_id/sensor/:sensor_id', auth, sensorController.getSensorOfStructure);
 
 //router.post('/', controller.createStructure);
 //router.put('/:id', controller.editStructure);
