@@ -3,7 +3,7 @@ const methods = require('./methods.controller');
 const structureController = {};
 
 structureController.getStructuresOfAdmin = (req, res) => {
-  connection.query('call getStructuresAdmin', function (error, results, fields) {
+  mysql.query('call getStructuresAdmin', function (error, results, fields) {
     if (!methods.isError(error, res)) {
       res.status(200);
       res.json({
@@ -14,7 +14,7 @@ structureController.getStructuresOfAdmin = (req, res) => {
 };
 
 structureController.getStructuresOfRepr = (req, res) => {
-  connection.query("call getStructuresOfRepr(" + req.user.enterprise_id + ")", function (error, result, fields) {
+  mysql.query("call getStructuresOfRepr(" + req.user.enterprise_id + ")", function (error, result, fields) {
     if (!methods.isError(error, res)) {
       res.status(200);
       res.json({
@@ -25,7 +25,7 @@ structureController.getStructuresOfRepr = (req, res) => {
 };
 
 structureController.getStructureOfResp = (req, res) => {
-  connection.query("call getStructuresOfResp(" + req.user._id + ")", function (error, result, fields) {
+  mysql.query("call getStructuresOfResp(" + req.user._id + ")", function (error, result, fields) {
     if (!methods.isError(error, res)) {
       res.status(200);
       res.json({
@@ -36,7 +36,7 @@ structureController.getStructureOfResp = (req, res) => {
 };
 
 structureController.getStructuresOfGuest = (req, res) => {
-  connection.query("call getStructuresOfRepr(" + req.user.enterprise_id + ")", function (error, result, fields) {
+  mysql.query("call getStructuresOfRepr(" + req.user.enterprise_id + ")", function (error, result, fields) {
     if (!methods.isError(error, res)) {
       res.status(200);
       res.json({
@@ -47,7 +47,7 @@ structureController.getStructuresOfGuest = (req, res) => {
 };
 
 structureController.getStructure = (req, res) => {  
-  connection.query("call getStructure(" + req.params.id + ")", function (error, result, fields) {
+  mysql.query("call getStructure(" + req.params.id + ")", function (error, result, fields) {
     if (!methods.isError(error, res)) {
       res.status(200);
       res.json({
