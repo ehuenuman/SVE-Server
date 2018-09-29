@@ -33,7 +33,7 @@ app.use(function (err, req, res, next) {
 });
 
 // Database connection
-global.connection = require('./config/database');
+global.connection = require('./config/mysql.config');
 
 // Starting the server
 app.listen(app.get('port'), () => {
