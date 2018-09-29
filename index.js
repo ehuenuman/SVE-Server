@@ -34,6 +34,7 @@ app.use(function (err, req, res, next) {
 
 // Database connection
 global.mysql = require('./config/mysql.config');
+global.mongo = require('./config/mongo.config');
 
 // Starting the server
 app.listen(app.get('port'), () => {
