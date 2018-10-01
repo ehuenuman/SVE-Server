@@ -1,17 +1,12 @@
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
+const mongoose = require('mongoose');
 
 // Connection URL
-const url = 'mongodb://pontinel:XqgABXscwAgwxdM8maZt@127.0.0.1:27017/pontinel';
+const uri = 'mongodb://pontinel:XqgABXscwAgwxdM8maZt@localhost:27017/pontinel';
 
-// Use connect method to connect to the Server  
-MongoClient.connect(url, { useNewUrlParser: true }, function(err, client) {
-  assert.equal(null, err);
-  console.log("Connected successfully to MongoDB");
-  //client.close();  
-  return client.db("pontinel");
-});
+mongoose.connect(uri, {useNewUrlParser: true})
+  .then(db => console.log("Connected successfully to MongoDB"))
+  .catch(err => console.error(err));
 
-module.exports = mongoMethods;
+module.exports = mongoose;
 
 

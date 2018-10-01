@@ -4,7 +4,7 @@
   "description": "Back end of Pontinel",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --ignore sessions/ server/index.js"
+    "dev": "nodemon --ignore tmp/ server/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
     "express-jwt": "^5.3.1",
     "jsonfile": "^5.0.0",
     "jsonwebtoken": "^8.3.0",
-    "mongodb": "^3.1.6",
+    "mongoose": "^5.3.0",
     "morgan": "^1.9.0",
     "mysql": "^2.16.0",
     "passport": "^0.4.0",
