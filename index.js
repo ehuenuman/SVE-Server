@@ -16,6 +16,7 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(passport.initialize());
+app.use('/static', express.static('public_files'));
 
 // Routes
 app.use('/api/auth', require('./routes/auth.routes'));
