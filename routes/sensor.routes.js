@@ -16,7 +16,7 @@ var auth = jwt({
   }
 });
 
-//router.get('/', auth, controller.getSensors);
+router.post('/', auth, controller.getDataSensor);
 //router.get('/:id', auth, controller.getSensor);
 //router.post('/', controller.createSensor);
 //router.put('/:id', controller.editSensor);
