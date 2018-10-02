@@ -3,7 +3,7 @@ const methods = require('./methods.controller');
 const sensorController = {};
 
 sensorController.getSensors = (req, res) => {
-  myqsl.query("call getSensorsOfStructure(" + req.params.id + ")", function (error, result, fields) {        
+  mysql.query("call getSensorsOfStructure(" + req.params.id + ")", function (error, result, fields) {        
     if (!methods.isError(error, res)) {
       var sensors = [];
       var data = result[0];      
@@ -42,7 +42,7 @@ sensorController.getSensorOfStructure = (req, res) => {
   let structure_id = req.params.structure_id;
   let sensor_id = req.params.sensor_id;
 
-  myqsl.query("call getSensorOfStructure(" + sensor_id + "," + structure_id + ")", function(error, result, fields) {
+  mysql.query("call getSensorOfStructure(" + sensor_id + "," + structure_id + ")", function(error, result, fields) {
     if (!methods.isError(error, res)) {
       if (result[0].length == 0) {
         res.status(404);
