@@ -1,4 +1,5 @@
 const methods = require('./methods.controller');
+const sensor = require('../models/sensor');
 
 const sensorController = {};
 
@@ -61,6 +62,36 @@ sensorController.getSensorOfStructure = (req, res) => {
       }
     }
   });
+}
+
+
+sensorController.getDataSensor = async (req, res) => {
+  var sensor_id = req.body.id;
+  var limit_data = req.body.limit;
+
+  await sensor.findOne({id: sensor_id}, function (error, document) {
+    if (error) {
+      res.status(500);
+      res.json({
+        "status": 500,
+        "error": error
+      });
+    } else {
+      if (document) {
+        res.status(200);
+        res.json({
+          "status": 200,
+          "response": document.measures
+        });
+      } else {
+        res.status(200)
+        res.json({
+          "status": 200,
+          "response": []
+        });
+      }
+    }
+  });  
 }
 
 sensorController.createSensor = function() {}
