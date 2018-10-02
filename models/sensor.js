@@ -7,7 +7,7 @@ const sensorSchema = new Schema({
   measures: [
     {
       timestamp: Date,
-      value: String
+      value: Number
     }
   ]
 });
