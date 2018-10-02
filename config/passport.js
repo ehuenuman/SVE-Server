@@ -13,7 +13,7 @@ passport.use("login", new LocalStrategy(
   (req, username, password, done) => {
     //console.log("Inside local strategy callback");
     //authMethods.createPassword(password);
-    connection.query("call loginUser('"+username+"')", function (error, rows) {
+    mysql.query("call loginUser('"+username+"')", function (error, rows) {
       if (error) {
         return done(error, false, {"msg": "Error de consulta a base de datos"});  
       }
@@ -25,7 +25,7 @@ passport.use("login", new LocalStrategy(
       }
       //console.log("Usuario correcto");
       const user = rows[0][0];
-      connection.query("call updateLastLogin("+user.user_id+")", function (error, rows) {
+      mysql.query("call updateLastLogin("+user.user_id+")", function (error, rows) {
         if (error) {
           return done(error, false, {"msg": "No se actualizó el last login"});
         }
@@ -44,7 +44,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((id, done) => {
   //console.log("Inside deserializeUser callback")
   //console.log(`The user id passport saved in the session file store is: ${id}`)
-  connection.query("call deserializeUser(" + id + ")", function(error, rows) {
+  mysql.query("call deserializeUser(" + id + ")", function(error, rows) {
     done(error, rows[0][0]);
   });
 });
