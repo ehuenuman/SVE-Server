@@ -6,13 +6,12 @@ const Sensor = require('../models/sensor');
 const uploadDataController = {};
 
 uploadDataController.uploadDataOfSensors = (req, res) => {
-
   
   const data = req.body;  
   
-  data.structure.daq.forEach(daq => {
+  data.structure.daq.forEach(daq => {    
     var nodes = daq.node;    
-    nodes.forEach(node => {
+    nodes.forEach(node => {  
       var sensors = node.sensor;
       sensors.forEach(sensor => {        
         // Actualiza el sensor si se encuentra su ID, 
@@ -32,9 +31,9 @@ uploadDataController.uploadDataOfSensors = (req, res) => {
           { upsert: true }, 
           (err, theSensor) => {
           if (err) {
-            console.error("Error generado al buscar un sensor. Error: ", err);
+            //console.error("Error generado al buscar un sensor. Error: ", err);
             res.status(500);
-            res.json({"status": 500, "response": "¡Error!"})
+            res.json({"status": 500, "response": "Error al buscar coincidencias de sensores.", "error": err})
           } else {
             // Se debe analizar si existe algún valor sobre los umbrales
             searhAlert(sensor.id, sensor.measures[0].timestamp, res);            
@@ -44,11 +43,12 @@ uploadDataController.uploadDataOfSensors = (req, res) => {
     });
   });
   
-  const file = './tmp/data.json';
+  /*const file = './tmp/data.json';
   jsonfile.writeFile(file, req.body, { flag: 'a' }, function(err) {
     if (err) console.log(err)
     else console.log("Documento json actualizado");
   });
+  */
   /*
   res.status(200);
   res.json({
@@ -119,7 +119,7 @@ function searhAlert(sensorId, oldDate, res) {
           var threshold_id = 0;
           var threshold_type;       
           if (measure.value <= ale_1["value"] || measure.value >= ale_2["value"]) {
-            console.log("Alerta: ", measure.value);
+            //console.log("Alerta: ", measure.value);
             threshold_type = ale_1["type_threshold_name"];
             if (measure.value <= ale_1["value"]) {
               threshold_id = ale_1["type_threshold_id"];
@@ -127,7 +127,7 @@ function searhAlert(sensorId, oldDate, res) {
               threshold_id = ale_2["type_threshold_id"];
             }
           } else {
-            console.log("Advertencia: ", measure.value);
+            //console.log("Advertencia: ", measure.value);
             threshold_type = adv_1["type_threshold_name"];
             if (measure.value <= adv_1["value"] && measure.value > ale_1["value"]) {
               threshold_id = adv_1["type_threshold_id"];
@@ -145,11 +145,11 @@ function searhAlert(sensorId, oldDate, res) {
               ${threshold_id})`,
             function(error, result, fields) {
               if (!methods.isError(error, res)) {
-                console.log("Alerta agregada exitosamente a MySQL");
+                //console.log("Alerta agregada exitosamente a MySQL");
                 if (threshold_type == "Alerta") {
-                  console.log("Whatsapp");
+                  //console.log("Whatsapp");
                 } else {
-                  console.log("Email");
+                  //console.log("Email");
                 }
               }
             }
@@ -159,7 +159,7 @@ function searhAlert(sensorId, oldDate, res) {
       });
       res.status(202);
       res.json({
-        "status": 202,
+        "status": 200,
         "response": "Información recbida y almacenada exitosamente"
       });
     } //Fin if (!methods.isError(error, res))
