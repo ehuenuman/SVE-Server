@@ -10,9 +10,35 @@
 /*!40101 SET NAMES utf8 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `alert`
+--
+
+DROP TABLE IF EXISTS `alert`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `alert` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `value` float NOT NULL,
+  `trigger_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_revised` tinyint(1) NOT NULL DEFAULT '0',
+  `revised_by` int(11) DEFAULT NULL,
+  `revised_date` datetime DEFAULT NULL,
+  `justification` varchar(254) DEFAULT NULL,
+  `sensor_id` int(11) NOT NULL,
+  `threshold_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_alert_sensor1_idx` (`sensor_id`),
+  KEY `fk_alert_threshold1_idx` (`threshold_id`),
+  CONSTRAINT `fk_alert_sensor1` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`),
+  CONSTRAINT `fk_alert_threshold1` FOREIGN KEY (`threshold_id`) REFERENCES `threshold` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `alert`
@@ -22,6 +48,27 @@ LOCK TABLES `alert` WRITE;
 /*!40000 ALTER TABLE `alert` DISABLE KEYS */;
 /*!40000 ALTER TABLE `alert` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `daq`
+--
+
+DROP TABLE IF EXISTS `daq`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `daq` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fab_date` date DEFAULT NULL,
+  `installation` date DEFAULT NULL,
+  `phone` varchar(9) NOT NULL,
+  `photo` varchar(100) DEFAULT NULL,
+  `commentary` varchar(200) DEFAULT NULL,
+  `structure_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_daq_structure1_idx` (`structure_id`),
+  CONSTRAINT `fk_daq_structure1` FOREIGN KEY (`structure_id`) REFERENCES `structure` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `daq`
@@ -34,6 +81,28 @@ INSERT INTO `daq` VALUES (1,'2018-01-01','2018-02-01','912345678',NULL,NULL,1),(
 UNLOCK TABLES;
 
 --
+-- Table structure for table `daq_has_error_list`
+--
+
+DROP TABLE IF EXISTS `daq_has_error_list`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `daq_has_error_list` (
+  `daq_id` int(11) NOT NULL,
+  `error_list_id` int(11) NOT NULL,
+  `trigger_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `revised_by` int(11) DEFAULT NULL,
+  `solution` varchar(254) DEFAULT NULL,
+  PRIMARY KEY (`daq_id`,`error_list_id`),
+  KEY `fk_daq_has_error_list_error_list1_idx` (`error_list_id`),
+  KEY `fk_daq_has_error_list_daq1_idx` (`daq_id`),
+  CONSTRAINT `fk_daq_has_error_list_daq1` FOREIGN KEY (`daq_id`) REFERENCES `daq` (`id`),
+  CONSTRAINT `fk_daq_has_error_list_error_list1` FOREIGN KEY (`error_list_id`) REFERENCES `error_list` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `daq_has_error_list`
 --
 
@@ -41,6 +110,20 @@ LOCK TABLES `daq_has_error_list` WRITE;
 /*!40000 ALTER TABLE `daq_has_error_list` DISABLE KEYS */;
 /*!40000 ALTER TABLE `daq_has_error_list` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `enterprise`
+--
+
+DROP TABLE IF EXISTS `enterprise`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `enterprise` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `enterprise`
@@ -53,6 +136,24 @@ INSERT INTO `enterprise` VALUES (1,'Dirección de Vialidad Región de los Ríos'
 UNLOCK TABLES;
 
 --
+-- Table structure for table `error_list`
+--
+
+DROP TABLE IF EXISTS `error_list`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `error_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` varchar(10) NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `description` varchar(254) NOT NULL,
+  `solution` varchar(254) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `code_UNIQUE` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `error_list`
 --
 
@@ -62,6 +163,26 @@ LOCK TABLES `error_list` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `freq_measure`
+--
+
+DROP TABLE IF EXISTS `freq_measure`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `freq_measure` (
+  `id` int(11) NOT NULL,
+  `value` float NOT NULL,
+  `assigned_by` int(11) NOT NULL,
+  `assigned_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `sensor_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_freq_measure_sensor1_idx` (`sensor_id`),
+  CONSTRAINT `fk_freq_measure_sensor1` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `freq_measure`
 --
 
@@ -69,6 +190,20 @@ LOCK TABLES `freq_measure` WRITE;
 /*!40000 ALTER TABLE `freq_measure` DISABLE KEYS */;
 /*!40000 ALTER TABLE `freq_measure` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `justify_alert`
+--
+
+DROP TABLE IF EXISTS `justify_alert`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `justify_alert` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `text` varchar(254) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `justify_alert`
@@ -81,6 +216,20 @@ INSERT INTO `justify_alert` VALUES (1,'Error de medición.'),(2,'Evento no caus�
 UNLOCK TABLES;
 
 --
+-- Table structure for table `justify_threshold`
+--
+
+DROP TABLE IF EXISTS `justify_threshold`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `justify_threshold` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `text` varchar(254) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `justify_threshold`
 --
 
@@ -89,6 +238,29 @@ LOCK TABLES `justify_threshold` WRITE;
 INSERT INTO `justify_threshold` VALUES (1,'Calibración inicial.'),(2,'Evento no causó daños, es seguro aumentar el umbral.'),(3,'Corrección del umbral por estar mal definido.');
 /*!40000 ALTER TABLE `justify_threshold` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `node`
+--
+
+DROP TABLE IF EXISTS `node`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `node` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `fab_date` date DEFAULT NULL,
+  `installation` date NOT NULL,
+  `latitude` varchar(15) NOT NULL,
+  `longitude` varchar(15) NOT NULL,
+  `photo` varchar(100) DEFAULT NULL,
+  `commentary` varchar(200) DEFAULT NULL,
+  `daq_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_node_daq1_idx` (`daq_id`),
+  CONSTRAINT `fk_node_daq1` FOREIGN KEY (`daq_id`) REFERENCES `daq` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `node`
@@ -101,6 +273,28 @@ INSERT INTO `node` VALUES (1,'nodo1',NULL,'2018-01-01','39°48\'42\",0S','73°14
 UNLOCK TABLES;
 
 --
+-- Table structure for table `node_has_error_list`
+--
+
+DROP TABLE IF EXISTS `node_has_error_list`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `node_has_error_list` (
+  `node_id` int(11) NOT NULL,
+  `error_list_id` int(11) NOT NULL,
+  `trigger_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `revised_by` int(11) DEFAULT NULL,
+  `solution` varchar(254) DEFAULT NULL,
+  PRIMARY KEY (`node_id`,`error_list_id`),
+  KEY `fk_node_has_error_list_error_list1_idx` (`error_list_id`),
+  KEY `fk_node_has_error_list_node1_idx` (`node_id`),
+  CONSTRAINT `fk_node_has_error_list_error_list1` FOREIGN KEY (`error_list_id`) REFERENCES `error_list` (`id`),
+  CONSTRAINT `fk_node_has_error_list_node1` FOREIGN KEY (`node_id`) REFERENCES `node` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `node_has_error_list`
 --
 
@@ -108,6 +302,21 @@ LOCK TABLES `node_has_error_list` WRITE;
 /*!40000 ALTER TABLE `node_has_error_list` DISABLE KEYS */;
 /*!40000 ALTER TABLE `node_has_error_list` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `procedure`
+--
+
+DROP TABLE IF EXISTS `procedure`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `procedure` (
+  `id` int(11) NOT NULL,
+  `action` varchar(254) NOT NULL,
+  `description` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `procedure`
@@ -120,6 +329,21 @@ INSERT INTO `procedure` VALUES (1,'Inspeccionar el puente físicamente dentro de
 UNLOCK TABLES;
 
 --
+-- Table structure for table `profile`
+--
+
+DROP TABLE IF EXISTS `profile`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `profile` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `description` varchar(254) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `profile`
 --
 
@@ -128,6 +352,21 @@ LOCK TABLES `profile` WRITE;
 INSERT INTO `profile` VALUES (1,'Administrador','Dueños del sistema. Pueden ver y modificar todas las estructuras del sistema. Será notificado al pasar el umbral de cualquier sensor.'),(2,'Representante','Puede ver y modificar todo de las estructuras de su empresa. Será notifcado al pasar el umbral de cualquier sensor de su empresa.'),(3,'Responsable','Puede ver y modificar uno o más estructuras de su empresa, además será notifcado al pasar el umbral de las estructuras asignadas al usuario.'),(4,'Invitado','Puede ver todas las estructuras de su empresa.');
 /*!40000 ALTER TABLE `profile` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `region`
+--
+
+DROP TABLE IF EXISTS `region`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `region` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `number` varchar(5) NOT NULL,
+  `name` varchar(150) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `region`
@@ -140,6 +379,34 @@ INSERT INTO `region` VALUES (1,'XV','Región de Arica y Parinacota'),(2,'I','Reg
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sensor`
+--
+
+DROP TABLE IF EXISTS `sensor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sensor` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `installation_date` date NOT NULL,
+  `latitude` varchar(15) NOT NULL,
+  `longitude` varchar(15) NOT NULL,
+  `photo` varchar(100) DEFAULT NULL,
+  `commentary` varchar(200) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `calibrationsheet` varchar(100) DEFAULT NULL,
+  `serial_number` varchar(100) DEFAULT NULL,
+  `node_id` int(11) NOT NULL,
+  `type_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_sensor_node1_idx` (`node_id`),
+  KEY `fk_sensor_type1_idx` (`type_id`),
+  CONSTRAINT `fk_sensor_node1` FOREIGN KEY (`node_id`) REFERENCES `node` (`id`),
+  CONSTRAINT `fk_sensor_type1` FOREIGN KEY (`type_id`) REFERENCES `type_sensor` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `sensor`
 --
 
@@ -150,6 +417,28 @@ INSERT INTO `sensor` VALUES (1,'Inclinómetro Cepa 1 Eje X','2018-08-01','39°48
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sensor_has_error`
+--
+
+DROP TABLE IF EXISTS `sensor_has_error`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sensor_has_error` (
+  `sensor_id` int(11) NOT NULL,
+  `error_list_id` int(11) NOT NULL,
+  `trigger_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `revised_by` int(11) DEFAULT NULL,
+  `solution` varchar(254) DEFAULT NULL,
+  PRIMARY KEY (`sensor_id`,`error_list_id`),
+  KEY `fk_sensor_has_error_list_error_list1_idx` (`error_list_id`),
+  KEY `fk_sensor_has_error_list_sensor1_idx` (`sensor_id`),
+  CONSTRAINT `fk_sensor_has_error_list_error_list1` FOREIGN KEY (`error_list_id`) REFERENCES `error_list` (`id`),
+  CONSTRAINT `fk_sensor_has_error_list_sensor1` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `sensor_has_error`
 --
 
@@ -157,6 +446,35 @@ LOCK TABLES `sensor_has_error` WRITE;
 /*!40000 ALTER TABLE `sensor_has_error` DISABLE KEYS */;
 /*!40000 ALTER TABLE `sensor_has_error` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `structure`
+--
+
+DROP TABLE IF EXISTS `structure`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `structure` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `latitude` varchar(15) NOT NULL,
+  `longitude` varchar(15) NOT NULL,
+  `length` float NOT NULL,
+  `width` float NOT NULL,
+  `route` varchar(15) NOT NULL,
+  `km` decimal(10,3) NOT NULL,
+  `date_joined` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `photo` varchar(100) DEFAULT NULL,
+  `commentary` varchar(200) DEFAULT '""',
+  `enterprise_id` int(11) NOT NULL,
+  `region_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_structure_enterprise1_idx` (`enterprise_id`),
+  KEY `fk_structure_region1_idx` (`region_id`),
+  CONSTRAINT `fk_structure_enterprise1` FOREIGN KEY (`enterprise_id`) REFERENCES `enterprise` (`id`),
+  CONSTRAINT `fk_structure_region1` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `structure`
@@ -169,6 +487,25 @@ INSERT INTO `structure` VALUES (1,'Puente Pedro de Valdivia','-73.2477','-39.811
 UNLOCK TABLES;
 
 --
+-- Table structure for table `structure_has_alert`
+--
+
+DROP TABLE IF EXISTS `structure_has_alert`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `structure_has_alert` (
+  `structure_id` int(11) NOT NULL,
+  `alert_id` int(11) NOT NULL,
+  `is_valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`structure_id`,`alert_id`),
+  KEY `fk_structure_has_alert_alert1_idx` (`alert_id`),
+  KEY `fk_structure_has_alert_structure1_idx` (`structure_id`),
+  CONSTRAINT `fk_structure_has_alert_alert1` FOREIGN KEY (`alert_id`) REFERENCES `alert` (`id`),
+  CONSTRAINT `fk_structure_has_alert_structure1` FOREIGN KEY (`structure_id`) REFERENCES `structure` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `structure_has_alert`
 --
 
@@ -176,6 +513,30 @@ LOCK TABLES `structure_has_alert` WRITE;
 /*!40000 ALTER TABLE `structure_has_alert` DISABLE KEYS */;
 /*!40000 ALTER TABLE `structure_has_alert` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `threshold`
+--
+
+DROP TABLE IF EXISTS `threshold`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `threshold` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `value` float NOT NULL,
+  `assigned_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `assigned_by` int(11) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `justification` varchar(254) DEFAULT NULL,
+  `sensor_id` int(11) NOT NULL,
+  `type_threshold_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_threshold_sensor1_idx` (`sensor_id`),
+  KEY `fk_threshold_type_threshold1_idx` (`type_threshold_id`),
+  CONSTRAINT `fk_threshold_sensor1` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`),
+  CONSTRAINT `fk_threshold_type_threshold1` FOREIGN KEY (`type_threshold_id`) REFERENCES `type_threshold` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=69 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `threshold`
@@ -188,6 +549,24 @@ INSERT INTO `threshold` VALUES (1,-8,'2018-08-01 00:00:00',0,1,NULL,1,2),(2,8,'2
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ticket`
+--
+
+DROP TABLE IF EXISTS `ticket`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ticket` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `trigger_user` int(11) NOT NULL,
+  `trigger_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `alert_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_ticket_alert1_idx` (`alert_id`),
+  CONSTRAINT `fk_ticket_alert1` FOREIGN KEY (`alert_id`) REFERENCES `alert` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `ticket`
 --
 
@@ -197,6 +576,30 @@ LOCK TABLES `ticket` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `trigger`
+--
+
+DROP TABLE IF EXISTS `trigger`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `trigger` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `value` float NOT NULL,
+  `assigned_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `assigned_by` int(11) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `justification` varchar(254) NOT NULL,
+  `sensor_id` int(11) NOT NULL,
+  `type_trigger_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_trigger_sensor1_idx` (`sensor_id`),
+  KEY `fk_trigger_type_trigger1_idx` (`type_trigger_id`),
+  CONSTRAINT `fk_trigger_sensor1` FOREIGN KEY (`sensor_id`) REFERENCES `sensor` (`id`),
+  CONSTRAINT `fk_trigger_type_trigger1` FOREIGN KEY (`type_trigger_id`) REFERENCES `type_trigger` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `trigger`
 --
 
@@ -204,6 +607,23 @@ LOCK TABLES `trigger` WRITE;
 /*!40000 ALTER TABLE `trigger` DISABLE KEYS */;
 /*!40000 ALTER TABLE `trigger` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `type_sensor`
+--
+
+DROP TABLE IF EXISTS `type_sensor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `type_sensor` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) NOT NULL,
+  `model` varchar(254) NOT NULL,
+  `unit` varchar(45) NOT NULL,
+  `datasheet` varchar(254) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `type_sensor`
@@ -216,6 +636,23 @@ INSERT INTO `type_sensor` VALUES (1,'Desplazamiento lineal 5 mm','Miran KPC-5mm'
 UNLOCK TABLES;
 
 --
+-- Table structure for table `type_threshold`
+--
+
+DROP TABLE IF EXISTS `type_threshold`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `type_threshold` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  `color` varchar(8) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `type_threshold`
 --
 
@@ -224,6 +661,25 @@ LOCK TABLES `type_threshold` WRITE;
 INSERT INTO `type_threshold` VALUES (1,'Advertencia','Primer umbral. Notifica mediante correo electrónico al administrador y responsable de la empresa.','ffc107'),(2,'Alerta','Segundo umbral. Notifica mediante Whatsapps al administrador, responsable y representante de la empresa.','dc3545');
 /*!40000 ALTER TABLE `type_threshold` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `type_threshold_has_procedure`
+--
+
+DROP TABLE IF EXISTS `type_threshold_has_procedure`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `type_threshold_has_procedure` (
+  `type_threshold_id` int(11) NOT NULL,
+  `procedure_id` int(11) NOT NULL,
+  `order` int(11) NOT NULL,
+  PRIMARY KEY (`type_threshold_id`,`procedure_id`),
+  KEY `fk_type_threshold_has_procedure_procedure1_idx` (`procedure_id`),
+  KEY `fk_type_threshold_has_procedure_type_threshold1_idx` (`type_threshold_id`),
+  CONSTRAINT `fk_type_threshold_has_procedure_procedure1` FOREIGN KEY (`procedure_id`) REFERENCES `procedure` (`id`),
+  CONSTRAINT `fk_type_threshold_has_procedure_type_threshold1` FOREIGN KEY (`type_threshold_id`) REFERENCES `type_threshold` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `type_threshold_has_procedure`
@@ -236,6 +692,21 @@ INSERT INTO `type_threshold_has_procedure` VALUES (1,1,0),(1,2,1),(1,3,2),(1,4,3
 UNLOCK TABLES;
 
 --
+-- Table structure for table `type_trigger`
+--
+
+DROP TABLE IF EXISTS `type_trigger`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `type_trigger` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `description` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Dumping data for table `type_trigger`
 --
 
@@ -243,6 +714,36 @@ LOCK TABLES `type_trigger` WRITE;
 /*!40000 ALTER TABLE `type_trigger` DISABLE KEYS */;
 /*!40000 ALTER TABLE `type_trigger` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(150) NOT NULL,
+  `salt` varchar(32) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `phone` varchar(9) NOT NULL,
+  `email` varchar(254) NOT NULL,
+  `date_joined` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_login` datetime DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `enterprise_id` int(11) NOT NULL,
+  `profile_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_name_UNIQUE` (`username`),
+  KEY `fk_user_enterprise1_idx` (`enterprise_id`),
+  KEY `fk_user_profile1_idx` (`profile_id`),
+  CONSTRAINT `fk_user_enterprise1` FOREIGN KEY (`enterprise_id`) REFERENCES `enterprise` (`id`),
+  CONSTRAINT `fk_user_profile1` FOREIGN KEY (`profile_id`) REFERENCES `profile` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `user`
@@ -253,6 +754,25 @@ LOCK TABLES `user` WRITE;
 INSERT INTO `user` VALUES (1,'test','','$2a$10$C8Oo22l4GVib96eBIZyOPuffGOevFD10B/5fAhDcqHCC0ISD3w5V6','test','test','test','test@test.cl','2018-09-06 16:13:14','2018-09-13 19:43:45',1,1,1),(2,'Administrador','fb1c43bf717b458e964689dbb5fde472','5ec533bfed33a7f0c07fd67c7fba8a567b747c641fe523b195fca1813bad6ddc30253741074e738c5c10101991f8e69393c29b2df549a02172be3352e18aa77d','Admistrador','Administrador','912345678','email@administrador.lc','2018-09-13 20:00:30','2018-10-03 13:52:21',1,1,1),(3,'Representante','ce0b9238261b63dec0ee2c1558f576cf','98faa6d197324f9d5a250fbd4267b882788d1e1fc6073be1cecea6d5f7d18bef06521bdb3845f903e26c1813065ff11cdb809beb2b8ea93a9b07652df51bad39','Representante','Representante','912345678','email@representante.cl','2018-09-13 20:00:30','2018-09-24 12:24:20',1,1,2),(4,'Responsable','ed74a1b634733152949f5a761d47829f','c4a4805fd76545eba6a2ccf5c57f742162f21079e6cf7041623f69cd98c69ceb1cfae166e4bf7627b94e3b897b71a764edf25b04fa9e483b635fb2888ba5b305','Responsable','Responsable','912345678','email@responsable.cl','2018-09-13 20:00:30','2018-09-24 17:31:06',1,1,3),(5,'Invitado','343c44dd9dd3773384d8b788b44e0e82','fae8deaf9d65a56720b8be2cae8d867e7beb7124477660db931be5baff7c67e12813be4c0b12e73626580a821e05a50889f491ff02c23c1c7d3008f783c9c01d','Invitado','Invitado','912345678','email@invitado.cl','2018-09-13 20:00:30','2018-09-27 18:23:02',1,1,4);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `user_has_structure`
+--
+
+DROP TABLE IF EXISTS `user_has_structure`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_has_structure` (
+  `user_id` int(11) NOT NULL,
+  `structure_id` int(11) NOT NULL,
+  `assigned_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`structure_id`,`user_id`),
+  KEY `fk_user_has_structure_structure1_idx` (`structure_id`),
+  KEY `fk_user_has_structure_user1_idx` (`user_id`),
+  CONSTRAINT `fk_user_has_structure_structure1` FOREIGN KEY (`structure_id`) REFERENCES `structure` (`id`),
+  CONSTRAINT `fk_user_has_structure_user1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `user_has_structure`
@@ -267,9 +787,10 @@ UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-10-03 15:44:08
+-- Dump completed on 2018-10-03 15:48:39
