@@ -78,10 +78,20 @@ sensorController.getDataSensor = async (req, res) => {
       });
     } else {
       if (document) {
+        var xAxis = [];
+        var yAxis = [];
+        document.measures.forEach(measure => {
+          xAxis.push(measure.timestamp);
+          yAxis.push(measure.value);
+        });
+
         res.status(200);
         res.json({
           "status": 200,
-          "response": document.measures
+          "response": {
+            "xAxis": xAxis,
+            "yAxis": yAxis
+          }
         });
       } else {
         res.status(200)
