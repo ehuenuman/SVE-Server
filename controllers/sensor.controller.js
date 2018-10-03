@@ -68,40 +68,70 @@ sensorController.getSensorOfStructure = (req, res) => {
 sensorController.getDataSensor = async (req, res) => {
   var sensor_id = req.body.id;
   var limit_data = req.body.limit;
+  var adv_1, adv_2, ale_1, ale_2;          
 
-  await sensor.findOne({id: sensor_id}, function (error, document) {
-    if (error) {
-      res.status(500);
-      res.json({
-        "status": 500,
-        "error": error
-      });
-    } else {
-      if (document) {
-        var xAxis = [];
-        var yAxis = [];
-        document.measures.forEach(measure => {
-          xAxis.push(measure.timestamp);
-          yAxis.push(measure.value);
-        });
-
-        res.status(200);
-        res.json({
-          "status": 200,
-          "response": {
-            "xAxis": xAxis,
-            "yAxis": yAxis
+  await mysql.query("call getThresholdOfSensor("+ sensor_id +")", function (error, thresholds, fields) {
+    if (!methods.isError(error, res)) {
+      adv_1 = thresholds[0][0];
+      adv_2 = thresholds[0][1];
+      ale_1 = thresholds[0][2];
+      ale_2 = thresholds[0][3];
+      
+      sensor.findOne({id: sensor_id}, function (error, document) {
+        if (error) {
+          res.status(500);
+          res.json({
+            "status": 500,
+            "error": error
+          });
+        } else {
+          if (document) {
+            var xAxis = [];
+            var yAxis = [];
+            var maxValue = document.measures[0];
+            var minValue = document.measures[0];        
+            
+            document.measures.forEach(measure => {          
+              if (measure.value >= maxValue.value) {
+                maxValue = measure;                        
+              }
+              if (measure.value <= minValue.value) {
+                minValue = measure;            
+              }          
+              xAxis.push(measure.timestamp);
+              yAxis.push(measure.value);
+            });       
+    
+            res.status(200);
+            res.json({
+              "status": 200,
+              "response": {
+                "xAxis": xAxis,
+                "yAxis": yAxis,
+                "thresholds": {
+                  "adv1": adv_1,
+                  "adv2": adv_2,
+                  "ale1": ale_1,
+                  "ale2": ale_2
+                },
+                "historical": {
+                  "maxValue": maxValue,
+                  "minValue": minValue
+                }
+              }
+            });
+          } else {
+            res.status(200)
+            res.json({
+              "status": 200,
+              "response": []
+            });
           }
-        });
-      } else {
-        res.status(200)
-        res.json({
-          "status": 200,
-          "response": []
-        });
-      }
+        }
+      });  
     }
-  });  
+  });
+
 }
 
 sensorController.createSensor = function() {}
