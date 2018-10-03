@@ -64,7 +64,13 @@ sensorController.getSensorOfStructure = (req, res) => {
   });
 }
 
-
+/**
+ * POST api/sensor
+ * Retorna los valores medidos por el sensor para
+ * realizar el gráfico.
+ * @param {*} req - request del usuario.
+ * @param {*} res - response al usuario.
+ */
 sensorController.getDataSensor = async (req, res) => {
   var sensor_id = req.body.id;
   var limit_data = req.body.limit;
