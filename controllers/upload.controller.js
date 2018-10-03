@@ -74,7 +74,7 @@ module.exports = uploadDataController;
 function searhAlert(sensorId, oldDate, res) { 
   // Reetorna los umbrales; 4 total, 2 para advertencia y 2 para alerta; positivos y negativos con sus caracteristicas. 
   // Primero estan los dos de advertencia y luego los dos de alerta.
-  mysql.query("call getThresholdOfSensor("+ sensorId +")", sensorId, async function (error, thresholds, fields) {
+  mysql.query("call getThresholdOfSensor("+ sensorId +")", async function (error, thresholds, fields) {
     if (!methods.isError(error, res)) {
       var adv_1, adv_2, ale_1, ale_2;
       
