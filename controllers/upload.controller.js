@@ -33,7 +33,7 @@ uploadDataController.uploadDataOfSensors = (req, res) => {
           if (err) {
             //console.error("Error generado al buscar un sensor. Error: ", err);
             res.status(500);
-            res.json({"status": 500, "response": "Error al buscar coincidencias de sensores.", "error": err})
+            res.json({"status": 500, "response": "Error al actualizar/crear sensores.", "error": err})
           } else {
             // Se debe analizar si existe algún valor sobre los umbrales
             searhAlert(sensor.id, sensor.measures[0].timestamp, res);            
@@ -150,17 +150,16 @@ function searhAlert(sensorId, oldDate, res) {
                   //console.log("Whatsapp");
                 } else {
                   //console.log("Email");
-                }
+                }                
               }
             }
           );
-
         });
       });
-      res.status(202);
+      res.status(200);
       res.json({
         "status": 200,
-        "response": "Información recbida y almacenada exitosamente"
+        "response": "Información recibida y almacenada exitosamente"
       });
     } //Fin if (!methods.isError(error, res))
   });
