@@ -1,0 +1,10 @@
+UPDATE `pontinel`.`sensor` SET `photo` = '1InclinometroCepa1EjeX.jpg' WHERE (`id` = '1');
+UPDATE `pontinel`.`sensor` SET `photo` = '2InclinometroCepa1EjeY.jpg' WHERE (`id` = '2');
+UPDATE `pontinel`.`sensor` SET `photo` = '3InlinometroCepa2EjeX.jpg' WHERE (`id` = '3');
+UPDATE `pontinel`.`sensor` SET `photo` = '4InlinometroCepa2EjeY.jpg' WHERE (`id` = '4');
+UPDATE `pontinel`.`sensor` SET `is_active` = '0' WHERE (`id` = '5');
+UPDATE `pontinel`.`sensor` SET `is_active` = '0' WHERE (`id` = '6');
+UPDATE `pontinel`.`sensor` SET `is_active` = '0' WHERE (`id` = '7');
+UPDATE `pontinel`.`sensor` SET `name` = 'Temperatura ambiental I', `photo` = '8TemperaturaAmbientalI.jpg' WHERE (`id` = '8');
+UPDATE `pontinel`.`sensor` SET `is_active` = '0' WHERE (`id` = '9');
+UPDATE `pontinel`.`sensor` SET `name` = 'Temperatura ambiental II', `photo` = '31TemperaturaAmbientalII.jpg' WHERE (`id` = '31');
