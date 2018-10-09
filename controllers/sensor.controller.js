@@ -130,7 +130,14 @@ sensorController.getDataSensor = async (req, res) => {
             res.status(200)
             res.json({
               "status": 200,
-              "response": []
+              "response": {
+                "thresholds": {
+                  "adv1": adv_1,
+                  "adv2": adv_2,
+                  "ale1": ale_1,
+                  "ale2": ale_2
+                }
+              }
             });
           }
         }
