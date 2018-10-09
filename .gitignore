@@ -1,6 +1,7 @@
 # Folders
 tmp/
 public_file/
+database/updates/
 
 # Logs
 logs
