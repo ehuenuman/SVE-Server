@@ -36,7 +36,7 @@ uploadDataController.uploadDataOfSensors = (req, res) => {
             res.json({"status": 500, "response": "Error al actualizar/crear sensores.", "error": err})
           } else {
             // Se debe analizar si existe algún valor sobre los umbrales
-            searhAlert(sensor.id, sensor.measures[0].timestamp, res);            
+            searchAlert(sensor.id, sensor.measures[0].timestamp, res);            
           }
         });
       });
@@ -71,7 +71,23 @@ module.exports = uploadDataController;
  * @param {*} oldDate  - fecha desde la cual se comenzara a comparar los valores con los umbrales.
  * @param {*} res - objeto response de la consulta realizada.
  */
-function searhAlert(sensorId, oldDate, res) { 
+function searchAlert(sensorId, oldDate, res) { 
+  
+  var FACTOR_A = 1;
+  var FACTOR_B = 0;
+
+  mysql.query("select * from pontinel.sensor where id=" + sensorId + ";", function(error, sensor, fields) {
+    if (!methods.isError(error, res)) {
+      if (sensor[0].factor_a) {
+        FACTOR_A = sensor[0].factor_a;
+      }
+      if (sensor[0].factor_b) {
+        FACTOR_B = sensor[0].factor_b;
+      }
+
+      console.log(FACTOR_A, FACTOR_B);
+    }
+  });
   // Reetorna los umbrales; 4 total, 2 para advertencia y 2 para alerta; positivos y negativos con sus caracteristicas. 
   // Primero estan los dos de advertencia y luego los dos de alerta.
   mysql.query("call getThresholdOfSensor("+ sensorId +")", async function (error, thresholds, fields) {
@@ -98,11 +114,11 @@ function searhAlert(sensorId, oldDate, res) {
                 cond: {
                   $or: [
                     { $and: [
-                      { $lte: [ "$$measure.value", adv_1["value"] ] },
+                      { $lte: [ ((("$$measure.value")*FACTOR_A)+FACTOR_B), adv_1["value"] ] },
                       { $gte: [ "$$measure.timestamp", new Date(oldDate) ] }
                     ] },
                     { $and: [
-                      { $gte: [ "$$measure.value", adv_2["value"] ] },
+                      { $gte: [ ((("$$measure.value")*FACTOR_A)+FACTOR_B), adv_2["value"] ] },
                       { $gte: [ "$$measure.timestamp", new Date(oldDate) ] }
                     ] }
                   ]              
@@ -118,18 +134,18 @@ function searhAlert(sensorId, oldDate, res) {
         document.measures.forEach(measure => {
           var threshold_id = 0;
           var threshold_type;       
-          if (measure.value <= ale_1["value"] || measure.value >= ale_2["value"]) {
-            //console.log("Alerta: ", measure.value);
+          if ((((measure.value)*FACTOR_A)+FACTOR_B) <= ale_1["value"] || (((measure.value)*FACTOR_A)+FACTOR_B) >= ale_2["value"]) {
+            //console.log("Alerta: ", (((measure.value)*FACTOR_A)+FACTOR_B));
             threshold_type = ale_1["type_threshold_name"];
-            if (measure.value <= ale_1["value"]) {
+            if ((((measure.value)*FACTOR_A)+FACTOR_B) <= ale_1["value"]) {
               threshold_id = ale_1["type_threshold_id"];
             } else {
               threshold_id = ale_2["type_threshold_id"];
             }
           } else {
-            //console.log("Advertencia: ", measure.value);
+            //console.log("Advertencia: ", (((measure.value)*FACTOR_A)+FACTOR_B));
             threshold_type = adv_1["type_threshold_name"];
-            if (measure.value <= adv_1["value"] && measure.value > ale_1["value"]) {
+            if ((((measure.value)*FACTOR_A)+FACTOR_B) <= adv_1["value"] && (((measure.value)*FACTOR_A)+FACTOR_B) > ale_1["value"]) {
               threshold_id = adv_1["type_threshold_id"];
             } else {
               threshold_id = adv_2["type_threshold_id"];
@@ -139,7 +155,7 @@ function searhAlert(sensorId, oldDate, res) {
           // Insertamos la alerta en MySQL
           mysql.query(
             `call setAlert(
-              ${measure.value}, 
+              ${(((measure.value)*FACTOR_A)+FACTOR_B)}, 
               '${measure.timestamp.getFullYear()}-${(measure.timestamp.getMonth()+1)}-${measure.timestamp.getDate()} ${measure.timestamp.getHours()}:${measure.timestamp.getMinutes()}:${measure.timestamp.getSeconds()}', 
               ${sensorId}, 
               ${threshold_id})`,
