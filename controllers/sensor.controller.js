@@ -88,7 +88,7 @@ sensorController.getDataSensor = async (req, res) => {
         FACTOR_B = sensor[0][0].factor_b;
       }
 
-      console.log(FACTOR_A, FACTOR_B);
+      //console.log(FACTOR_A, FACTOR_B);
     }
   });
 

@@ -91,7 +91,7 @@ function searchAlert(sensorId, oldDate, res) {
         FACTOR_B = sensor[0].factor_b;
       }
 
-      console.log(FACTOR_A, FACTOR_B);
+      //console.log(FACTOR_A, FACTOR_B);
     }
   });
   // Reetorna los umbrales; 4 total, 2 para advertencia y 2 para alerta; positivos y negativos con sus caracteristicas. 
