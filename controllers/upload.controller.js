@@ -5,11 +5,11 @@ const Sensor = require('../models/sensor');
 
 const uploadDataController = {};
 
-uploadDataController.uploadDataOfSensors = (req, res) => {
+uploadDataController.uploadDataOfSensors = async (req, res) => {
   
   const data = req.body;  
   
-  data.structure.daq.forEach(daq => {    
+  await data.structure.daq.forEach(daq => {    
     var nodes = daq.node;    
     nodes.forEach(node => {  
       var sensors = node.sensor;
@@ -33,7 +33,7 @@ uploadDataController.uploadDataOfSensors = (req, res) => {
           if (err) {
             //console.error("Error generado al buscar un sensor. Error: ", err);
             res.status(500);
-            res.json({"status": 500, "response": "Error al actualizar/crear sensores.", "error": err})
+
           } else {
             // Se debe analizar si existe algún valor sobre los umbrales
             searchAlert(sensor.id, sensor.measures[0].timestamp, res);            
@@ -41,6 +41,12 @@ uploadDataController.uploadDataOfSensors = (req, res) => {
         });
       });
     });
+  });
+
+  res.status(200);
+    res.json({
+      "status": 200,
+      "response": "Información recibida y almacenada exitosamente"
   });
   
   /*const file = './tmp/data.json';
@@ -171,11 +177,6 @@ function searchAlert(sensorId, oldDate, res) {
             }
           );
         });
-      });
-      res.status(200);
-      res.json({
-        "status": 200,
-        "response": "Información recibida y almacenada exitosamente"
       });
     } //Fin if (!methods.isError(error, res))
   });
