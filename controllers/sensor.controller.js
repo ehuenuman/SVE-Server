@@ -73,8 +73,24 @@ sensorController.getSensorOfStructure = (req, res) => {
  */
 sensorController.getDataSensor = async (req, res) => {
   var sensor_id = req.body.id;
+  var structure_id = req.body.structure_id;
   var limit_data = req.body.limit;
-  var adv_1, adv_2, ale_1, ale_2;          
+  var adv_1, adv_2, ale_1, ale_2;
+  var FACTOR_A = 1;
+  var FACTOR_B = 0;
+
+  await mysql.query("call getSensorOfStructure(" + sensor_id + "," + structure_id + ")", function(error, sensor, fields) {
+    if (!methods.isError(error, res)) {
+      if (sensor[0][0].factor_a) {
+        FACTOR_A = sensor[0][0].factor_a;
+      }
+      if (sensor[0][0].factor_b) {
+        FACTOR_B = sensor[0][0].factor_b;
+      }
+
+      console.log(FACTOR_A, FACTOR_B);
+    }
+  });
 
   await mysql.query("call getThresholdOfSensor("+ sensor_id +")", function (error, thresholds, fields) {
     if (!methods.isError(error, res)) {
@@ -95,19 +111,23 @@ sensorController.getDataSensor = async (req, res) => {
             var xAxis = [];
             var yAxis = [];
             var maxValue = document.measures[0];
-            var minValue = document.measures[0];        
+            var minValue = document.measures[0];
             
-            document.measures.forEach(measure => {          
-              if (measure.value >= maxValue.value) {
+            document.measures.forEach(measure => {
+              mValue = +(((measure.value*FACTOR_A) + FACTOR_B).toFixed(4));
+              if (mValue >= +(((maxValue.value*FACTOR_A) + FACTOR_B).toFixed(4))) {
                 maxValue = measure;                        
+                maxValue.value = +(((maxValue.value*FACTOR_A) + FACTOR_B).toFixed(4));
               }
-              if (measure.value <= minValue.value) {
+              if (mValue <= +(((minValue.value*FACTOR_A) + FACTOR_B).toFixed(4))) {
                 minValue = measure;            
+                minValue.value = +(((minValue.value*FACTOR_A) + FACTOR_B).toFixed(4));
               }          
               xAxis.push(measure.timestamp);
-              yAxis.push(measure.value);
+              yAxis.push(mValue);
             });       
-    
+
+
             res.status(200);
             res.json({
               "status": 200,
