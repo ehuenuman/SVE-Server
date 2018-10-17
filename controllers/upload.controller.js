@@ -91,7 +91,7 @@ function searchAlert(sensorId, measures, res) {
         FACTOR_B = sensor[0].factor_b;
       }
 
-      console.log(FACTOR_A, FACTOR_B);
+      //console.log(FACTOR_A, FACTOR_B);
     }
   });
   // Reetorna los umbrales; 4 total, 2 para advertencia y 2 para alerta; positivos y negativos con sus caracteristicas. 
@@ -106,36 +106,6 @@ function searchAlert(sensorId, measures, res) {
       ale_1 = thresholds[0][2];
       ale_2 = thresholds[0][3];      
       // Buscar nueva forma de validar esta sección
-
-      // Se consulta a MongoDB por lo valores fuera de la zona segura.
-      // Se extraen todos para luego revisar uno a uno si es adv o ale.      
-      /*
-      const cursor = await Sensor.aggregate([
-        { $match: { id: sensorId } },
-        {
-          $project: {        
-            measures: {
-              $filter: {
-                input: "$measures",
-                as: "measure",
-                cond: {
-                  $or: [
-                    { $and: [
-                      { $lte: [ ((("$$measure.value")*FACTOR_A)+FACTOR_B), adv_1["value"] ] },
-                      { $gte: [ "$$measure.timestamp", new Date(oldDate) ] }
-                    ] },
-                    { $and: [
-                      { $gte: [ ((("$$measure.value")*FACTOR_A)+FACTOR_B), adv_2["value"] ] },
-                      { $gte: [ "$$measure.timestamp", new Date(oldDate) ] }
-                    ] }
-                  ]              
-                }
-              }
-            }
-          }
-        }
-      ]);
-      */
 
       //console.log(adv_1, adv_2, ale_1, ale_2);
       // Recorremos cada valor y se genera la alerta o advertencia correspondiente.     
