@@ -36,7 +36,7 @@ uploadDataController.uploadDataOfSensors = async (req, res) => {
 
           } else {
             // Se debe analizar si existe algún valor sobre los umbrales
-            searchAlert(sensor.id, sensor.measures[0].timestamp, res);            
+            searchAlert(sensor.id, sensor.measures, res);            
           }
         });
       });
@@ -74,10 +74,10 @@ module.exports = uploadDataController;
  * Si existe una alerta o advertencia genera el mensaje al cliente
  * y almacena la información en la BD MySQL
  * @param {*} sensorId - identificador del sensor a buscar sus umbrales.
- * @param {*} oldDate  - fecha desde la cual se comenzara a comparar los valores con los umbrales.
+ * @param {*} measures - valores que acaba de leer el sensor.
  * @param {*} res - objeto response de la consulta realizada.
  */
-function searchAlert(sensorId, oldDate, res) { 
+function searchAlert(sensorId, measures, res) { 
   
   var FACTOR_A = 1;
   var FACTOR_B = 0;
@@ -91,7 +91,7 @@ function searchAlert(sensorId, oldDate, res) {
         FACTOR_B = sensor[0].factor_b;
       }
 
-      //console.log(FACTOR_A, FACTOR_B);
+      console.log(FACTOR_A, FACTOR_B);
     }
   });
   // Reetorna los umbrales; 4 total, 2 para advertencia y 2 para alerta; positivos y negativos con sus caracteristicas. 
@@ -109,6 +109,7 @@ function searchAlert(sensorId, oldDate, res) {
 
       // Se consulta a MongoDB por lo valores fuera de la zona segura.
       // Se extraen todos para luego revisar uno a uno si es adv o ale.      
+      /*
       const cursor = await Sensor.aggregate([
         { $match: { id: sensorId } },
         {
@@ -134,50 +135,57 @@ function searchAlert(sensorId, oldDate, res) {
           }
         }
       ]);
+      */
 
+      //console.log(adv_1, adv_2, ale_1, ale_2);
       // Recorremos cada valor y se genera la alerta o advertencia correspondiente.     
-      cursor.map( function(document) {
-        document.measures.forEach(measure => {
+        measures.forEach(measure => {
+          //console.log((((measure.value)*FACTOR_A)+FACTOR_B));
           var threshold_id = 0;
           var threshold_type;       
           if ((((measure.value)*FACTOR_A)+FACTOR_B) <= ale_1["value"] || (((measure.value)*FACTOR_A)+FACTOR_B) >= ale_2["value"]) {
+            threshold_type = ale_1["id"];
             //console.log("Alerta: ", (((measure.value)*FACTOR_A)+FACTOR_B));
-            threshold_type = ale_1["type_threshold_name"];
             if ((((measure.value)*FACTOR_A)+FACTOR_B) <= ale_1["value"]) {
               threshold_id = ale_1["type_threshold_id"];
             } else {
               threshold_id = ale_2["type_threshold_id"];
             }
+            //console.log(threshold_id);
           } else {
-            //console.log("Advertencia: ", (((measure.value)*FACTOR_A)+FACTOR_B));
-            threshold_type = adv_1["type_threshold_name"];
-            if ((((measure.value)*FACTOR_A)+FACTOR_B) <= adv_1["value"] && (((measure.value)*FACTOR_A)+FACTOR_B) > ale_1["value"]) {
-              threshold_id = adv_1["type_threshold_id"];
-            } else {
-              threshold_id = adv_2["type_threshold_id"];
-            }
-          }               
+            threshold_type = adv_1["id"];
+            if ((((measure.value)*FACTOR_A)+FACTOR_B) <= adv_1["value"] || (((measure.value)*FACTOR_A)+FACTOR_B) >= adv_2["value"]) {
+              //console.log("Advertencia: ", (((measure.value)*FACTOR_A)+FACTOR_B));
+              if ((((measure.value)*FACTOR_A)+FACTOR_B) <= adv_1["value"]) {
+                threshold_id = adv_1["id"];
+              } else {
+                threshold_id = adv_2["id"];
+              }
+              //console.log(threshold_id);
+            } 
+          }           
 
           // Insertamos la alerta en MySQL
-          mysql.query(
-            `call setAlert(
-              ${(((measure.value)*FACTOR_A)+FACTOR_B)}, 
-              '${measure.timestamp.getFullYear()}-${(measure.timestamp.getMonth()+1)}-${measure.timestamp.getDate()} ${measure.timestamp.getHours()}:${measure.timestamp.getMinutes()}:${measure.timestamp.getSeconds()}', 
-              ${sensorId}, 
-              ${threshold_id})`,
-            function(error, result, fields) {
-              if (!methods.isError(error, res)) {
-                //console.log("Alerta agregada exitosamente a MySQL");
-                if (threshold_type == "Alerta") {
-                  //console.log("Whatsapp");
-                } else {
-                  //console.log("Email");
-                }                
+          if (threshold_id != 0) {
+            mysql.query(
+              `call setAlert(
+                ${(((measure.value)*FACTOR_A)+FACTOR_B)}, 
+                '${measure.timestamp.split(" ")[0].split("/")[0]}-${measure.timestamp.split(" ")[0].split("/")[1]}-${measure.timestamp.split(" ")[0].split("/")[2]} ${measure.timestamp.split(" ")[1]}',            
+                ${sensorId}, 
+                ${threshold_id})`,
+              function(error, result, fields) {
+                if (!methods.isError(error, res)) {
+                  //console.log("Alerta agregada exitosamente a MySQL");
+                  if (threshold_type == "Alerta") {
+                    //console.log("Whatsapp");
+                  } else {
+                    //console.log("Email");
+                  }                
+                }
               }
-            }
-          );
+            );
+          }
         });
-      });
     } //Fin if (!methods.isError(error, res))
   });
 }
